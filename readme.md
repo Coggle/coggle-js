@@ -1,6 +1,6 @@
-## Coggle API Javascript Client
+# Coggle API Javascript Client
 
-### Basic Use
+## Basic Use
 See [coggle-issue-importer](http://github.com/coggle/coggle-issue-importer) for
 a complete example application, including authentication.
 
@@ -15,25 +15,38 @@ coggle.createDiagram(
     "My New Coggle"
     function(err, diagram){
         if(err)
-            raise err;
+            throw err;
         console.log("created diagram!", diagram);
     }
 );
 ```
 
 
-### API Documentation
+# API Documentation
+##Class `CoggleApi`
+The Coggle API client.
 
-#### CoggleApi
-##### constructor
-##### createDiagram
+###Constructor
+Create a new instance of the Coggle API client.
 
-### CoggleApiDiagram 
-##### constructor
-##### getNodes
-##### webUrl
+###Method `post`
+POST to an endpoint on the Coggle API
 
-#### CoggleApiNode
-##### constructor
-##### addChild
+Parameters:
+  * **`endpoint`** type: `String`URL of endpoint to post to (relative to the domain)
+  * **`body`**The body to post. Will be converted to JSON.
+  * **`callback`** type: `Function`Callback accepting (error, body) that will be called with the result. The response returned from the server is parsed as JSON and returned as `body`.
 
+###Method `get`
+GET from an endpoint on the Coggle API
+
+Parameters:
+  * **`endpoint`** type: `String`URL of endpoint to get from (relative to the domain)
+  * **`callback`** type: `Function`Callback accepting (error, body) that will be called with the result. The response returned from the server is parsed as JSON and returned as `body`.
+
+###Method `createDiagram`
+Create a new Coggle diagram.
+
+Parameters:
+  * **`title`** type: `String`Title for the created diagram.
+  * **`callback`** type: `Function`Callback accepting (error, CoggleApiDiagram)
