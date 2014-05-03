@@ -34,7 +34,7 @@ POST to an endpoint on the Coggle API
 
 Parameters:
   * **`endpoint`** type: `String`URL of endpoint to post to (relative to the domain)
-  * **`body`**The body to post. Will be converted to JSON.
+  * **`body`** The body to post. Will be converted to JSON.
   * **`callback`** type: `Function`Callback accepting (error, body) that will be called with the result. The response returned from the server is parsed as JSON and returned as `body`.
 
 ###Method `get`
