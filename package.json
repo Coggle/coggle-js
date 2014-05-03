@@ -1,0 +1,23 @@
+{
+  "name": "coggle",
+  "version": "0.0.0",
+  "description": "Library for accessing the Coggle API",
+  "main": "lib.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "coggle",
+    "api"
+  ],
+  "author": "James Crosby <james@coggle.it>",
+  "license": "MIT",
+  "dependencies": {
+    "unirest": "*"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-watch": "*"
+  }
+}
