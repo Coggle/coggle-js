@@ -25,11 +25,13 @@ coggle.createDiagram(
 # API Documentation
 
 
+
 ##Class `CoggleApi`
 The Coggle API client.
 
 ###Constructor
 Create a new instance of the Coggle API client.
+
 Example:
 ```js
 new CoggleApi({token:user_auth_token})
@@ -40,6 +42,7 @@ Parameters:
 
 ###Method `post`
 POST to an endpoint on the Coggle API
+
 Example:
 ```js
 .post(`/api/1/diagrams`, {title:'My New Diagram'}, function(err, diagram){...})
