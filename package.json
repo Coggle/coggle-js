@@ -1,6 +1,6 @@
 {
   "name": "coggle",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Library for accessing the Coggle API",
   "main": "lib.js",
   "scripts": {
@@ -12,17 +12,17 @@
   ],
   "homepage": "https://github.com/Coggle/coggle-js",
   "bugs": {
-    "url" : "https://github.com/Coggle/coggle-js/issues",
-    "email" : "coggle-js-bugs@coggle.it"
+    "url": "https://github.com/Coggle/coggle-js/issues",
+    "email": "coggle-js-bugs@coggle.it"
   },
   "license": "MIT",
   "author": {
-    "name" : "James Crosby",
-    "email" : "james@coggle.it"
+    "name": "James Crosby",
+    "email": "james@coggle.it"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "http://github.com/Coggle/coggle-js.git"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Coggle/coggle-js.git"
   },
   "dependencies": {
     "unirest": "*"
