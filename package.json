@@ -1,6 +1,6 @@
 {
   "name": "coggle",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Library for accessing the Coggle API",
   "main": "lib.js",
   "scripts": {
