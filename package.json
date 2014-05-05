@@ -10,8 +10,20 @@
     "coggle",
     "api"
   ],
-  "author": "James Crosby <james@coggle.it>",
+  "homepage": "https://github.com/Coggle/coggle-js",
+  "bugs": {
+    "url" : "https://github.com/Coggle/coggle-js/issues",
+    "email" : "coggle-js-bugs@coggle.it"
+  },
   "license": "MIT",
+  "author": {
+    "name" : "James Crosby",
+    "email" : "james@coggle.it"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/Coggle/coggle-js.git"
+  },
   "dependencies": {
     "unirest": "*"
   },
