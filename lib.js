@@ -59,6 +59,9 @@ var CoggleApiNode = function CoggleApiNode(coggle_api_diagram, node_resource){
   }
 };
 CoggleApiNode.prototype = {
+  replaceId: function(url){
+    return url.replace(':node', this.id);
+  },
   /**!jsjsdoc
    *
    * doc.CoggleApiNode.addChild = {
@@ -74,7 +77,7 @@ CoggleApiNode.prototype = {
    *     },
    *     callback: {
    *       $type: "Function",
-   *       $brief: "Callback accepting (error, [Array of CoggleApiNode])",
+   *       $brief: "Callback accepting (Error, CoggleApiNode)",
    *     }
    *   }
    * }
@@ -97,6 +100,120 @@ CoggleApiNode.prototype = {
         self.children.push(api_node);
         return callback(false, api_node);
     });
+  },
+  
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiNode.update = {
+   *   $brief: "Update the properties of this node",
+   *   $parameters: {
+   *     properties: {
+   *        $type: "Object: {text:String, offset:{x:Number, y:Number}, parent:String}",
+   *        $brief: "Omitted properties are unmodified."
+   *     },
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, CoggleApiNode)",
+   *     }
+   *   }
+   * }
+   *
+   */
+  update: function update(properties, callback){
+    var body = {};
+    if(properties.parent){
+        if(typeof properties.parent !== 'string')
+            callback(new Error('parent id must be string'));
+        body.parent = properties.parent;
+    }
+    if(properties.offset){
+        if(isNaN(properties.offset.x)) callback(new Error('offset.x must be a number'));
+        if(isNaN(properties.offset.y)) callback(new Error('offset.y must be a number'));
+        body.offset = {
+            x: properties.offset.x,
+            y: properties.offset.y
+        };
+    }
+    if(properties.text){
+        if(typeof properties.text !== 'string')
+            callback(new Error('text must be string'));
+        if(properties.text.length > 3000)
+            callback(new Error('text too long'));
+        body.text = properties.text;
+    }
+    var self = this;
+    this.diagram.apiclient.put(
+      this.replaceId(this.diagram.replaceId('/api/1/diagrams/:diagram/nodes/:node')),
+      body,
+      function(err, node){
+        if(err)
+          return callback(err);
+        self.parent_id = node.parent_id;
+        self.text      = node.text;
+        self.offset    = node.offset;
+        return callback(false, self);
+    });
+  },
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiNode.setText = {
+   *   $brief: "Set the text of this node.",
+   *   $parameters: {
+   *     text: {
+   *        $type: "String",
+   *        $brief: "New text to set"
+   *     },
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, CoggleApiNode)",
+   *     }
+   *   }
+   * }
+   *
+   */
+  setText: function setText(text, callback){
+    return this.update({text:text}, callback);
+  },
+
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiNode.move = {
+   *   $brief: "Move this node to a new offset relative to its parent.",
+   *   $parameters: {
+   *     offset: {
+   *        $type: "Object {x:Number, y:Number}",
+   *        $brief: "New position to set"
+   *     },
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, CoggleApiNode)",
+   *     }
+   *   }
+   * }
+   *
+   */
+  move: function move(offset, callback){
+    return this.update({offset:offset}, callback);
+  },
+
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiNode.remove = {
+   *   $brief: "Remove this node, and all nodes descended from it.",
+   *   $parameters: {
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error)",
+   *     }
+   *   }
+   * }
+   *
+   */
+  remove: function remove(callback){
+    this.diagram.apiclient.delete(
+      this.replaceId(this.diagram.replaceId('/api/1/diagrams/:diagram/nodes/:node')),
+      callback
+    );
   }
 };
 
@@ -127,6 +244,12 @@ var CoggleApiDiagram = function CoggleApiDiagram(coggle_api, diagram_resource){
     this.title     = diagram_resource.title;
 };
 CoggleApiDiagram.prototype = {
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiDiagram.webUrl = {
+   *   $brief: "Return the web URL for accessing this diagram.",
+   * }
+   */
   webUrl: function webUrl(){
     return this.replaceId(this.apiclient.baseurl+'/diagram/:diagram');
   },
@@ -140,7 +263,7 @@ CoggleApiDiagram.prototype = {
    *   $parameters: {
    *     callback: {
    *       $type: "Function",
-   *       $brief: "Callback accepting (error, [Array of CoggleApiNode])",
+   *       $brief: "Callback accepting (Error, [Array of CoggleApiNode])",
    *     }
    *   }
    * }
@@ -201,12 +324,12 @@ CoggleApi.prototype = {
    *     body: "The body to post. Will be converted to JSON.",
    *     callback: {
    *       $type: "Function",
-   *       $brief: "Callback accepting (error, body) that will be called "+
+   *       $brief: "Callback accepting (Error, body) that will be called "+
    *               "with the result. The response returned from the server "+
    *               "is parsed as JSON and returned as `body`.",
    *     }
    *   },
-   *   $examples: ".post(`/api/1/diagrams`, {title:'My New Diagram'}, function(err, diagram){...})"
+   *   $examples: ".post('/api/1/diagrams', {title:'My New Diagram'}, function(err, diagram){...})"
    * }
    */
   post: function post(endpoint, body, callback){
@@ -216,6 +339,37 @@ CoggleApi.prototype = {
       .end(function(response){
         if(!response.ok)
           return callback(new Error('POST ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+        return callback(false, response.body);
+    });
+  },
+  /**!jsjsdoc
+   *
+   * doc.CoggleApi.put = {
+   *   $api: "private",
+   *   $brief: "PUT to an endpoint on the Coggle API",
+   *   $parameters: {
+   *     endpoint: {
+   *       $type: "String",
+   *       $brief: "URL of endpoint to put to (relative to the domain)",
+   *     },
+   *     body: "The body to put. Will be converted to JSON.",
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, body) that will be called "+
+   *               "with the result. The response returned from the server "+
+   *               "is parsed as JSON and returned as `body`.",
+   *     }
+   *   },
+   *   $examples: ".put('/api/1/diagrams', {title:'My New Diagram'}, function(err, diagram){...})"
+   * }
+   */
+  put: function put(endpoint, body, callback){
+    unirest.put(this.baseurl + endpoint + '?access_token=' + this.token)
+      .type('json')
+      .send(body)
+      .end(function(response){
+        if(!response.ok)
+          return callback(new Error('PUT ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
         return callback(false, response.body);
     });
   },
@@ -231,7 +385,7 @@ CoggleApi.prototype = {
    *     },
    *     callback: {
    *       $type: "Function",
-   *       $brief: "Callback accepting (error, body) that will be called "+
+   *       $brief: "Callback accepting (Error, body) that will be called "+
    *               "with the result. The response returned from the server "+
    *               "is parsed as JSON and returned as `body`.",
    *     }
@@ -250,6 +404,34 @@ CoggleApi.prototype = {
 
   /**!jsjsdoc
    *
+   * doc.CoggleApi.delete = {
+   *   $api: "private",
+   *   $brief: "DELETE an endpoint on the Coggle API",
+   *   $parameters: {
+   *     endpoint: {
+   *       $type: "String",
+   *       $brief: "URL of endpoint to delete (relative to the domain)"
+   *     },
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error) that will be called "+
+   *               "with the result.",
+   *     }
+   *   }
+   * }
+   */
+  'delete': function(endpoint, callback){
+    unirest.delete(this.baseurl + endpoint + '?access_token=' + this.token)
+      .type('json')
+      .end(function(response){
+        if(!response.ok)
+          return callback(new Error('DELETE ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+        return callback(false, response.body);
+    });
+  },
+
+  /**!jsjsdoc
+   *
    * doc.CoggleApi.createDiagram = {
    *   $brief: "Create a new Coggle diagram.",
    *   $parameters: {
@@ -259,13 +441,15 @@ CoggleApi.prototype = {
    *     },
    *     callback: {
    *       $type: "Function",
-   *       $brief: "Callback accepting (error, CoggleApiDiagram)",
+   *       $brief: "Callback accepting (Error, CoggleApiDiagram)",
    *     }
    *   }
    * }
    */
   createDiagram: function createCoggle(title, callback){
-    // callback should accept(error, diagram)
+    if(typeof title !== 'string')
+        throw new Error("title must be a string");
+    // callback should accept(Error, diagram)
     var self = this;
     var body = {
       title:title

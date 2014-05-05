@@ -4,7 +4,7 @@
   "description": "Library for accessing the Coggle API",
   "main": "lib.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "keywords": [
     "coggle",
@@ -18,6 +18,9 @@
   "devDependencies": {
     "grunt": "*",
     "grunt-contrib-jshint": "*",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-watch": "*",
+    "grunt-mocha-test": "*",
+    "mocha": "*",
+    "assert": "*"
   }
 }

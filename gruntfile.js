@@ -16,13 +16,25 @@ module.exports = function(grunt) {
     },
     jsjsdoc: {
       main: {
-        files: {'docs/main.md': ['*.js']},
+        files: {'docs/main.md': ['*.js', 'test/*.js']},
+      }
+    },
+    mochaTest: {
+      options: {
+        reporter: 'spec',
+        clearRequireCache: true
+      },
+      test: {
+        src: ['test/*.js']
       }
     },
     watch: {
       main: {
-        files: ['*.js'],
-        tasks: ['jshint', 'jsjsdoc']
+        options: {
+          spawn: false
+        },
+        files: ['*.js', 'test/*.js'],
+        tasks: ['default']
       }
     }
   });
@@ -30,8 +42,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-jsjsdoc');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('default', ['jshint', 'jsjsdoc', 'watch']);
+  grunt.registerTask('test', ['mochaTest']);
   
 };
 
