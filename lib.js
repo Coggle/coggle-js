@@ -248,6 +248,7 @@ CoggleApiDiagram.prototype = {
    *
    * doc.CoggleApiDiagram.webUrl = {
    *   $brief: "Return the web URL for accessing this diagram.",
+   *   $parameters: {}
    * }
    */
   webUrl: function webUrl(){
