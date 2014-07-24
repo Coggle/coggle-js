@@ -2,8 +2,9 @@
 [![NPM version](https://badge.fury.io/js/coggle.svg)](http://badge.fury.io/js/coggle)
 
 ## Basic Use
-See [coggle-issue-importer](http://github.com/coggle/coggle-issue-importer) for
-a complete example application, including authentication.
+See [coggle-issue-importer](http://github.com/coggle/coggle-issue-importer) or
+[coggle-opml-importer](http://github.com/coggle/coggle-opml-importer) for
+complete example applications, including authentication.
 
 ```bash
 npm install coggle
