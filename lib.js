@@ -64,8 +64,8 @@ var CoggleApiNode = function CoggleApiNode(coggle_api_diagram, node_resource){
   }
 };
 CoggleApiNode.prototype = {
-  replaceId: function(url){
-    return url.replace(':node', this.id);
+  replaceIds: function(url){
+    return this.diagram.replaceId(url.replace(':node', this.id));
   },
   /**!jsjsdoc
    *
@@ -95,7 +95,8 @@ CoggleApiNode.prototype = {
            text: text
     };
     this.diagram.apiclient.post(
-      this.diagram.replaceId('/api/1/diagrams/:diagram/nodes'),
+      this.replaceIds('/api/1/diagrams/:diagram/nodes'),
+      '',
       body,
       function(err, node){
         if(err)
@@ -148,7 +149,8 @@ CoggleApiNode.prototype = {
     }
     var self = this;
     this.diagram.apiclient.put(
-      this.replaceId(this.diagram.replaceId('/api/1/diagrams/:diagram/nodes/:node')),
+      this.replaceIds('/api/1/diagrams/:diagram/nodes/:node'),
+      '',
       body,
       function(err, node){
         if(err)
@@ -216,7 +218,8 @@ CoggleApiNode.prototype = {
    */
   remove: function remove(callback){
     this.diagram.apiclient.delete(
-      this.replaceId(this.diagram.replaceId('/api/1/diagrams/:diagram/nodes/:node')),
+      this.replaceIds('/api/1/diagrams/:diagram/nodes/:node'),
+      '',
       callback
     );
   }
@@ -278,6 +281,7 @@ CoggleApiDiagram.prototype = {
     var self = this;
     this.apiclient.get(
       this.replaceId('/api/1/diagrams/:diagram/nodes'),
+      '',
       function(err, body){
         if(err)
           return callback(new Error('failed to get diagram nodes: ' + err.message));
@@ -316,8 +320,9 @@ CoggleApiDiagram.prototype = {
    */
   arrange: function(callback){
     var self = this;      
-    this.apiclient.post(
-      this.replaceId('/api/1/diagrams/:diagram/arrange'),
+    this.apiclient.put(
+      this.replaceId('/api/1/diagrams/:diagram/nodes'),
+      'action=arrange',
       {},
       function(err, body){
         if(err)
@@ -369,6 +374,7 @@ CoggleApi.prototype = {
    *       $type: "String",
    *       $brief: "URL of endpoint to post to (relative to the domain)",
    *     },
+   *     query_string: "Query string, if any.",
    *     body: "The body to post. Will be converted to JSON.",
    *     callback: {
    *       $type: "Function",
@@ -377,11 +383,13 @@ CoggleApi.prototype = {
    *               "is parsed as JSON and returned as `body`.",
    *     }
    *   },
-   *   $examples: ".post('/api/1/diagrams', {title:'My New Diagram'}, function(err, diagram){...})"
+   *   $examples: ".post('/api/1/diagrams', '', {title:'My New Diagram'}, function(err, diagram){...})"
    * }
    */
-  post: function post(endpoint, body, callback){
-    unirest.post(this.baseurl + endpoint + '?access_token=' + this.token)
+  post: function post(endpoint, query_string, body, callback){
+    if(query_string && query_string.indexOf('&') !== 0)
+      query_string = '&' + query_string;
+    unirest.post(this.baseurl + endpoint + '?access_token=' + this.token + (query_string || ''))
       .type('json')
       .send(body)
       .end(function(response){
@@ -403,6 +411,8 @@ CoggleApi.prototype = {
    *       $type: "String",
    *       $brief: "URL of endpoint to put to (relative to the domain)",
    *     },
+   *     query_string: "Query string, if any. Only `action=arrange` is"+
+   *                   "currently used by any endpoint.",
    *     body: "The body to put. Will be converted to JSON.",
    *     callback: {
    *       $type: "Function",
@@ -411,11 +421,13 @@ CoggleApi.prototype = {
    *               "is parsed as JSON and returned as `body`.",
    *     }
    *   },
-   *   $examples: ".put('/api/1/diagrams', {title:'My New Diagram'}, function(err, diagram){...})"
+   *   $examples: ".put('/api/1/diagrams', '', {title:'My New Diagram'}, function(err, diagram){...})"
    * }
    */
-  put: function put(endpoint, body, callback){
-    unirest.put(this.baseurl + endpoint + '?access_token=' + this.token)
+  put: function put(endpoint, query_string, body, callback){
+    if(query_string && query_string.indexOf('&') !== 0)
+      query_string = '&' + query_string;
+    unirest.put(this.baseurl + endpoint + '?access_token=' + this.token + (query_string || ''))
       .type('json')
       .send(body)
       .end(function(response){
@@ -437,6 +449,7 @@ CoggleApi.prototype = {
    *       $type: "String",
    *       $brief: "URL of endpoint to get from (relative to the domain)"
    *     },
+   *     query_string: "Query string, if any.",
    *     callback: {
    *       $type: "Function",
    *       $brief: "Callback accepting (Error, body) that will be called "+
@@ -446,8 +459,10 @@ CoggleApi.prototype = {
    *   }
    * }
    */
-  get: function get(endpoint, callback){
-    unirest.get(this.baseurl + endpoint + '?access_token=' + this.token)
+  get: function get(endpoint, query_string, callback){
+    if(query_string && query_string.indexOf('&') !== 0)
+      query_string = '&' + query_string;
+    unirest.get(this.baseurl + endpoint + '?access_token=' + this.token + (query_string || ''))
       .type('json')
       .end(function(response){
         if(!response.ok)
@@ -469,6 +484,7 @@ CoggleApi.prototype = {
    *       $type: "String",
    *       $brief: "URL of endpoint to delete (relative to the domain)"
    *     },
+   *     query_string: "Query string, if any.",
    *     callback: {
    *       $type: "Function",
    *       $brief: "Callback accepting (Error) that will be called "+
@@ -478,7 +494,9 @@ CoggleApi.prototype = {
    * }
    */
   'delete': function(endpoint, callback){
-    unirest.delete(this.baseurl + endpoint + '?access_token=' + this.token)
+    if(query_string && query_string.indexOf('&') !== 0)
+      query_string = '&' + query_string;
+    unirest.delete(this.baseurl + endpoint + '?access_token=' + this.token + (query_string || ''))
       .type('json')
       .end(function(response){
         if(!response.ok)
@@ -514,7 +532,7 @@ CoggleApi.prototype = {
     var body = {
       title:title
     };
-    this.post('/api/1/diagrams', body, function(err, body){
+    this.post('/api/1/diagrams', '', body, function(err, body){
       if(err)
         return callback(new Error('failed to create coggle: ' + err.message));
       return callback(false, new CoggleApiDiagram(self, body));
