@@ -1,5 +1,8 @@
-/**
- * # lib.js
+/** vim: et:ts=2:sw=2:sts=2
+ * @license Coggle OPML Importer Copyright (c) 2014, CoggleIt Limited. All Rights Reserved.
+ * Licensed under the MIT license, http://opensource.org/licenses/MIT
+ */
+/** # lib.js
  *
  * Define the Coggle API classes
  *
@@ -49,12 +52,14 @@ var CoggleApiNode = function CoggleApiNode(coggle_api_diagram, node_resource){
     this.parent_id = node_resource.parent;
   }
 
+  var self = this;
+
   this.children = [];
   if('children' in node_resource){
     node_resource.children.forEach(function(child_resource){
       var child = new CoggleApiNode(coggle_api_diagram, child_resource);
       child.parent_id = this.id;
-      this.children.push_back(child);
+      self.children.push(child);
     });
   }
 };
@@ -282,6 +287,48 @@ CoggleApiDiagram.prototype = {
         });
         return callback(false, api_nodes);
     });
+  },
+  /**!jsjsdoc
+   *
+   * doc.CoggleApiDiagram.arrange = {
+   *   $brief: "Rearrange the nodes in this diagram. Use with care!",
+   *   $detail:
+   *     "This function performs a server-side re-arrangement of all of the "+
+   *     "items in the diagram. It will attempt to make sure no items overlap, "+
+   *     "and to space things out evenly, it is **not** guaranteed to produce "+
+   *     "the same result when called with the same parameters. "+
+   *     "\n\n"+
+   *     "Use of this function is generally discouraged, for the same reason that "+
+   *     "an auto-arrange function isn't provided in the web interface to "+
+   *     "Coggle: the placement of items can convey meaning, and if your program "+
+   *     "understands relationships in the data (such as a natural ordering, or "+
+   *     "that some sibling branches are more closely associated than others), "+
+   *     "then you should make use of that information to perform a custom "+
+   *     "layout.",
+   *   $parameters: {
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, [Array of CoggleApiNode])",
+   *     }
+   *   }
+   * };
+   *
+   */
+  arrange: function(callback){
+    var self = this;      
+    this.apiclient.post(
+      this.replaceId('/api/1/diagrams/:diagram/arrange'),
+      {},
+      function(err, body){
+        if(err)
+          return callback(new Error('failed to rearrange diagram: ' + err.message));
+        var api_nodes = [];
+        body.forEach(function(node_resource){
+          api_nodes.push(new CoggleApiNode(self, node_resource));
+        });
+        return callback(false, api_nodes);
+      }
+    );
   }
 };
 
@@ -339,7 +386,10 @@ CoggleApi.prototype = {
       .send(body)
       .end(function(response){
         if(!response.ok)
-          return callback(new Error('POST ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+          return callback(new Error(
+            'POST ' + endpoint + ' '+(response.code || (response.error && response.error.code))+
+            ': ' + ((response.body && response.body.description) || response.error)
+          ));
         return callback(false, response.body);
     });
   },
@@ -370,7 +420,10 @@ CoggleApi.prototype = {
       .send(body)
       .end(function(response){
         if(!response.ok)
-          return callback(new Error('PUT ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+          return callback(new Error(
+            'PUT ' + endpoint + ' '+(response.code || (response.error && response.error.code))+
+            ': ' + ((response.body && response.body.description) || response.error)
+          ));
         return callback(false, response.body);
     });
   },
@@ -398,7 +451,10 @@ CoggleApi.prototype = {
       .type('json')
       .end(function(response){
         if(!response.ok)
-          return callback(new Error('GET ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+          return callback(new Error(
+            'GET ' + endpoint + ' '+(response.code || (response.error && response.error.code))+
+            ': ' + ((response.body && response.body.description) || response.error)
+          ));
         return callback(false, response.body);
     });
   },
@@ -426,7 +482,10 @@ CoggleApi.prototype = {
       .type('json')
       .end(function(response){
         if(!response.ok)
-          return callback(new Error('DELETE ' + endpoint + ' failed:' + (response.body && response.body.details) || response.error));
+          return callback(new Error(
+            'DELETE ' + endpoint + ' '+(response.code || (response.error && response.error.code))+
+            ': ' + ((response.body && response.body.description) || response.error)
+          ));
         return callback(false, response.body);
     });
   },

@@ -34,8 +34,10 @@ coggle.createDiagram(
 ##Class `CoggleApi`
 The Coggle API client.
 
+
 ###Constructor
 Create a new instance of the Coggle API client.
+
 
 Example:
 ```js
@@ -58,6 +60,7 @@ Parameters:
 ##Class `CoggleApiDiagram`
 Coggle API Diagram object.
 
+
 ###Constructor
 Create a new instance of a Coggle API Diagram object.
 
@@ -78,8 +81,20 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, [Array of CoggleApiNode])
 
+###Method `arrange()`
+Rearrange the nodes in this diagram. Use with care!
+
+This function performs a server-side re-arrangement of all of the items in the diagram. It will attempt to make sure no items overlap, and to space things out evenly, it is **not** guaranteed to produce the same result when called with the same parameters. 
+
+Use of this function is generally discouraged, for the same reason that an auto-arrange function isn't provided in the web interface to Coggle: the placement of items can convey meaning, and if your program understands relationships in the data (such as a natural ordering, or that some sibling branches are more closely associated than others), then you should make use of that information to perform a custom layout.
+
+Parameters:
+  * **`callback`** type: `Function`  
+     Callback accepting (Error, [Array of CoggleApiNode])
+
 ##Class `CoggleApiNode`
 Coggle API Node object, which represents individual parts("nodes") of the branches in a Coggle diagarm
+
 
 ###Constructor
 Create a new instance of a Coggle API Node object.
@@ -133,7 +148,5 @@ Remove this node, and all nodes descended from it.
 Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error)
-
-
 
 
