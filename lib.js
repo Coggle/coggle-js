@@ -88,6 +88,14 @@ CoggleApiNode.prototype = {
    * }
    */
   addChild: function addChild(text, offset, callback){
+    if(offset){
+      if(isNaN(offset.x)) return callback(new Error('offset.x must be a number'));
+      if(isNaN(offset.y)) return callback(new Error('offset.y must be a number'));
+    }
+    if(text){
+        if(typeof text !== 'string') return callback(new Error('text must be string'));
+        if(text.length > 3000) return callback(new Error('text too long'));
+    }
     var self = this;
     var body = {
          parent: this.id,
@@ -128,23 +136,23 @@ CoggleApiNode.prototype = {
   update: function update(properties, callback){
     var body = {};
     if(properties.parent){
-        if(typeof properties.parent !== 'string')
-            callback(new Error('parent id must be string'));
-        body.parent = properties.parent;
+      if(typeof properties.parent !== 'string')
+        return callback(new Error('parent id must be string'));
+      body.parent = properties.parent;
     }
     if(properties.offset){
-        if(isNaN(properties.offset.x)) callback(new Error('offset.x must be a number'));
-        if(isNaN(properties.offset.y)) callback(new Error('offset.y must be a number'));
-        body.offset = {
-            x: properties.offset.x,
-            y: properties.offset.y
-        };
+      if(isNaN(properties.offset.x)) return callback(new Error('offset.x must be a number'));
+      if(isNaN(properties.offset.y)) return callback(new Error('offset.y must be a number'));
+      body.offset = {
+        x: properties.offset.x,
+        y: properties.offset.y
+      };
     }
     if(properties.text){
         if(typeof properties.text !== 'string')
-            callback(new Error('text must be string'));
+            return callback(new Error('text must be string'));
         if(properties.text.length > 3000)
-            callback(new Error('text too long'));
+            return callback(new Error('text too long'));
         body.text = properties.text;
     }
     var self = this;
