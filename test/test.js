@@ -46,7 +46,7 @@ function testListDiagrams(coggle, check_for_coggle){
         
         var found_created_diagram = false;
         for(var i = 0; i < diagrams.length; i++){
-          if(diagrams[i].id == check_for_coggle.id){
+          if(diagrams[i].id == check_for_coggle.id && diagrams[i].title == check_for_coggle.title){
             found_created_diagram = true;
             break;
           }

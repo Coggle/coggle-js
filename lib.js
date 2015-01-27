@@ -535,14 +535,23 @@ CoggleApi.prototype = {
    * }
    */
   listDiagrams: function listDiagrams(options, callback){
+    var self = this;
+    function wrappedCB(err, diagram_resources){
+      if(err)
+        return callback(err);
+      var diagrams = diagram_resources.map(function(resource){
+        return new CoggleApiDiagram(self, resource);
+      });
+      return callback(err, diagrams);
+    }
     if(options.organisation){
       if(typeof options.organisation !== 'string')
         throw new Error("options.organisation must be a string or undefined");
       if(!/^[a-z]+[a-z0-9-]{2,}$/.test(options.organisation))
         throw new Error("invalid organisation name");
-      this.get('/api/1/organisations/' + options.organisation + '/diagrams', '', callback);
+      this.get('/api/1/organisations/' + options.organisation + '/diagrams', '', wrappedCB);
     }else{
-      this.get('/api/1/diagrams', '', callback);
+      this.get('/api/1/diagrams', '', wrappedCB);
     }
   },
 
