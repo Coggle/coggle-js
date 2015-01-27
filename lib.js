@@ -358,7 +358,7 @@ CoggleApiDiagram.prototype = {
  *   $parameters: {
  *     options: {
  *      $type: "Object",
- *      $brief: "Possible Options:\n  * **`token`**, **required**: API user "+
+ *      $brief: "Possible Options:\n    * **`token`**, **required**: API user "+
  *              "authentication token"
  *     }
  *   }
@@ -501,7 +501,7 @@ CoggleApi.prototype = {
    *   }
    * }
    */
-  'delete': function(endpoint, callback){
+  'delete': function(endpoint, query_string, callback){
     if(query_string && query_string.indexOf('&') !== 0)
       query_string = '&' + query_string;
     unirest.delete(this.baseurl + endpoint + '?access_token=' + this.token + (query_string || ''))
@@ -514,6 +514,36 @@ CoggleApi.prototype = {
           ));
         return callback(false, response.body);
     });
+  },
+
+  /**!jsjsdoc
+   *
+   * doc.CoggleApi.listDiagrams = {
+   *   $brief: "Lists diagrams accessible to the authorised user.",
+   *   $parameters: {
+   *     options: {
+   *       $type: "Object",
+   *       $brief: "Possible Options:\n    * **`organisation`**: The organisation"+
+   *               " to fetch diagrams for. (If undefined, the authenticated"+
+   *               " user's personal Coggles will be retrieved)"
+   *     },
+   *     callback: {
+   *       $type: "Function",
+   *       $brief: "Callback accepting (Error, [Array of CoggleApiDiagram])",
+   *     }
+   *   }
+   * }
+   */
+  listDiagrams: function listDiagrams(options, callback){
+    if(options.organisation){
+      if(typeof options.organisation !== 'string')
+        throw new Error("options.organisation must be a string or undefined");
+      if(!/^[a-z]+[a-z0-9-]{2,}$/.test(options.organisation))
+        throw new Error("invalid organisation name");
+      this.get('/api/1/organisations/' + options.organisation + '/diagrams', '', callback);
+    }else{
+      this.get('/api/1/diagrams', '', callback);
+    }
   },
 
   /**!jsjsdoc
@@ -545,7 +575,7 @@ CoggleApi.prototype = {
         return callback(new Error('failed to create coggle: ' + err.message));
       return callback(false, new CoggleApiDiagram(self, body));
     });
-  },
+  }
 };
 
 

@@ -31,6 +31,7 @@ coggle.createDiagram(
 # API Documentation
 
 
+
 ##Class `CoggleApi`
 The Coggle API client.
 
@@ -46,7 +47,17 @@ new CoggleApi({token:user_auth_token})
 Parameters:
   * **`options`** type: `Object`  
      Possible Options:
-  * **`token`**, **required**: API user authentication token
+    * **`token`**, **required**: API user authentication token
+
+###Method `listDiagrams()`
+Lists diagrams accessible to the authorised user.
+
+Parameters:
+  * **`options`** type: `Object`  
+     Possible Options:
+    * **`organisation`**: The organisation to fetch diagrams for. (If undefined, the authenticated user's personal Coggles will be retrieved)
+  * **`callback`** type: `Function`  
+     Callback accepting (Error, [Array of CoggleApiDiagram])
 
 ###Method `createDiagram()`
 Create a new Coggle diagram.

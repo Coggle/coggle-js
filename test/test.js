@@ -1,4 +1,5 @@
 var assert = require("assert");
+require('ssl-root-cas/latest').inject();
 
 var test_diagram_title = "Coggle JS Client Test";
 
@@ -30,7 +31,30 @@ function testCreateDiagram(coggle){
           throw err;
         assert(diagram);
         done();
-        testDiagram(diagram);
+        testListDiagrams(coggle, diagram);
+      });
+    });
+  });
+}
+
+function testListDiagrams(coggle, check_for_coggle){
+  describe("#listDiagrams()", function(){
+    it('should list existing diagrams', function(done){
+      coggle.listDiagrams(test_diagram_title, function(err, diagrams){
+        if(err)
+          throw err;
+        
+        var found_created_diagram = false;
+        for(var i = 0; i < diagrams.length; i++){
+          if(diagrams[i].id == check_for_coggle.id){
+            found_created_diagram = true;
+            break;
+          }
+        }
+        assert(found_created_diagram);
+
+        done();
+        testDiagram(check_for_coggle);
       });
     });
   });
