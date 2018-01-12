@@ -28,12 +28,13 @@
     "unirest": "~0.4.0"
   },
   "devDependencies": {
-    "grunt": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-mocha-test": "*",
-    "mocha": "*",
     "assert": "*",
-    "ssl-root-cas": "*"
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-jsjsdoc": "^0.1.0",
+    "grunt-mocha-test": "^0.13.3",
+    "mocha": "^4.1.0",
+    "ssl-root-cas": "^1.2.4"
   }
 }

@@ -32,11 +32,11 @@ coggle.createDiagram(
 
 
 
-##Class `CoggleApi`
+## Class `CoggleApi`
 The Coggle API client.
 
 
-###Constructor
+### Constructor
 Create a new instance of the Coggle API client.
 
 
@@ -49,7 +49,7 @@ Parameters:
      Possible Options:
     * **`token`**, **required**: API user authentication token
 
-###Method `listDiagrams()`
+### Method `listDiagrams()`
 Lists diagrams accessible to the authorised user.
 
 Parameters:
@@ -59,7 +59,7 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, [Array of CoggleApiDiagram])
 
-###Method `createDiagram()`
+### Method `createDiagram()`
 Create a new Coggle diagram.
 
 Parameters:
@@ -68,11 +68,11 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, CoggleApiDiagram)
 
-##Class `CoggleApiDiagram`
+## Class `CoggleApiDiagram`
 Coggle API Diagram object.
 
 
-###Constructor
+### Constructor
 Create a new instance of a Coggle API Diagram object.
 
 Parameters:
@@ -81,18 +81,18 @@ Parameters:
   * **`diagram_resource`** type: `Object`  
      Diagram Resource object, with at least `_id` and `title` fields
 
-###Method `webUrl()`
+### Method `webUrl()`
 Return the web URL for accessing this diagram.
 
 
-###Method `getNodes()`
+### Method `getNodes()`
 Get all of the nodes (branch elements) in a Diagram.
 
 Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, [Array of CoggleApiNode])
 
-###Method `arrange()`
+### Method `arrange()`
 Rearrange the nodes in this diagram. Use with care!
 
 This function performs a server-side re-arrangement of all of the items in the diagram. It will attempt to make sure no items overlap, and to space things out evenly, it is **not** guaranteed to produce the same result when called with the same parameters. 
@@ -103,11 +103,11 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, [Array of CoggleApiNode])
 
-##Class `CoggleApiNode`
+## Class `CoggleApiNode`
 Coggle API Node object, which represents individual parts("nodes") of the branches in a Coggle diagarm
 
 
-###Constructor
+### Constructor
 Create a new instance of a Coggle API Node object.
 
 Parameters:
@@ -116,7 +116,7 @@ Parameters:
   * **`node_resource`** type: `Object`  
      Node Resource object, with at least `_id` (`String`), `text` (`String`), and `offset` (`{x:Number, y:Number}`) fields.
 
-###Method `addChild()`
+### Method `addChild()`
 Add a child to this item. The child is positioned relative to this item, and will move when you move this item.
 
 Parameters:
@@ -126,7 +126,7 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, CoggleApiNode)
 
-###Method `update()`
+### Method `update()`
 Update the properties of this node
 
 Parameters:
@@ -135,7 +135,7 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, CoggleApiNode)
 
-###Method `setText()`
+### Method `setText()`
 Set the text of this node.
 
 Parameters:
@@ -144,7 +144,7 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, CoggleApiNode)
 
-###Method `move()`
+### Method `move()`
 Move this node to a new offset relative to its parent.
 
 Parameters:
@@ -153,7 +153,7 @@ Parameters:
   * **`callback`** type: `Function`  
      Callback accepting (Error, CoggleApiNode)
 
-###Method `remove()`
+### Method `remove()`
 Remove this node, and all nodes descended from it.
 
 Parameters:
